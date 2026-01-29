@@ -1,0 +1,10 @@
+{
+  "persons": [
+    "张三",
+    "李四",
+    "王五"
+  ],
+  "first_data": 20260112,
+  "first_index": 2,
+  "data_file": "data.json"
+}
