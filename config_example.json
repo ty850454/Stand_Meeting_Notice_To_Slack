@@ -1,0 +1,24 @@
+{
+  "persons": [
+    "张三",
+    "李四",
+    "王五"
+  ],
+  "first_data": 20260112,
+  "first_index": 2,
+  "data_file": "data.json",
+  "channel": "fei_shu",
+  "fei_shu": {
+    "webhook": "https://open.feishu.cn/open-apis/bot/v2/hook/000000",
+    "sign": true,
+    "secret": "th2rQrFu9PnoMnDfqmaFOe",
+    "user_mapping": {
+      "张三": "000000",
+      "李四": "000000",
+      "王五": "000000"
+    }
+  },
+  "slack": {
+    "url": "https://hooks.slack.com/services/000000/000000/000000"
+  }
+}

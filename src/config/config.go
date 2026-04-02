@@ -8,11 +8,24 @@ import (
 
 // Config 应用配置结构
 type Config struct {
-	Persons    []string `json:"persons"`     // 站会主持人列表
-	FirstData  int64    `json:"first_data"`  // 第一个站会的日期，格式为yyyyMMdd文本转数字
-	FirstIndex int      `json:"first_index"` // 第一个站会的主持人在persons列表中的索引，从0开始
-	SlackUrl   string   `json:"slack_url"`   // Slack 通知 URL
-	DataFile   string   `json:"data_file"`   // 通知数据文件名
+	Persons    []string      `json:"persons"`     // 站会主持人列表
+	FirstData  int64         `json:"first_data"`  // 第一个站会的日期，格式为yyyyMMdd文本转数字
+	FirstIndex int           `json:"first_index"` // 第一个站会的主持人在persons列表中的索引，从0开始
+	DataFile   string        `json:"data_file"`   // 通知数据文件名
+	Channel    string        `json:"channel"`     // 通知数据文件名
+	SlackUrl   *SlackConfig  `json:"slack"`       // Slack 通知 URL
+	FeiShuUrl  *FeiShuConfig `json:"fei_shu"`     // Slack 通知 URL
+}
+
+type SlackConfig struct {
+	Url string `json:"url"` // Slack 通知 URL
+}
+
+type FeiShuConfig struct {
+	Webhook     string             `json:"webhook"`
+	Sign        bool               `json:"sign"`
+	Secret      string             `json:"secret"`
+	UserMapping *map[string]string `json:"user_mapping"`
 }
 
 // LoadConfig 从文件加载配置

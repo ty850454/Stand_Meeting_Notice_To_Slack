@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"os"
+	"stand-meeting-notice/src/channel"
 
 	"stand-meeting-notice/src/config"
 	"stand-meeting-notice/src/logger"
@@ -13,6 +14,26 @@ const (
 	// DefaultConfigFilePath 默认配置文件路径
 	DefaultConfigFilePath = "config.json"
 )
+
+func genChannel(cfg *config.Config) channel.Channel {
+	channelStr := cfg.Channel
+
+	if channelStr == "" {
+		return nil
+	}
+
+	switch channelStr {
+	case "slack":
+		if cfg.SlackUrl == nil {
+			logger.LogError("Slack URL is not set", nil)
+			os.Exit(1)
+		}
+		return channel.NewSlackChannel(cfg.SlackUrl.Url)
+	case "fei_shu":
+		return channel.NewFeiShuChannel(cfg.FeiShuUrl)
+	}
+	return nil
+}
 
 func main() {
 	// 解析命令行参数
@@ -26,6 +47,8 @@ func main() {
 		logger.LogError("failed to load config", err)
 		os.Exit(1)
 	}
+
+	channelObj := genChannel(cfg)
 
 	// 获取当前日期
 	var currentDate int64
@@ -83,20 +106,17 @@ func main() {
 	}
 
 	// 生成通知消息
-	message := utils.GenerateNotificationMessage(meetingInfo)
+	message := utils.GenerateSimpleMessage(meetingInfo)
 
-	// 检查是否提供了 Slack Webhook URL
-	if cfg.SlackUrl == "" {
-		// 没有提供 Slack URL，只输出日志
-		logger.LogInfo("Notification", "msg", message)
+	if channelObj == nil {
+		logger.LogInfo("Meeting notification sent successfully", "mgs", message)
 	} else {
-		// 发送 Slack 通知
-		if err := utils.SendSlackNotification(cfg.SlackUrl, message); err != nil {
-			logger.LogError("failed to send slack notification", err)
+		err = channelObj.Send(meetingInfo)
+		if err != nil {
+			logger.LogError("failed to send notification", err)
 			os.Exit(1)
 		}
-
-		// 记录成功信息
 		logger.LogInfo("Meeting notification sent successfully", "mgs", message)
 	}
+
 }
